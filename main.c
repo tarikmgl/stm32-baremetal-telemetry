@@ -60,7 +60,7 @@ void TIM2_Init(void) {
 }
 
 void TIM2_IRQHandler(void) {
-    TIM2_SR &= ~(1 << 0);      // UIF flag'ini temizle (ZORUNLU)
+    TIM2_SR &= ~(1 << 0);      // UIF flag'ini temizle
 
     // LED toggle (gorsel gostergemiz)
     static uint8_t led_state = 0;
@@ -71,7 +71,7 @@ void TIM2_IRQHandler(void) {
     }
     led_state = !led_state;
 
-    // Telemetri frame olustur ve UART'tan gonder
+    // Telemetri frame
     TelemetryFrame_t frame;
     telemetry_build_frame(&frame, g_seq_num++);
 
@@ -92,6 +92,6 @@ int main(void) {
     TIM2_Init();
 
     while (1) {
-        // Ana dongu bos - her sey interrupt icinde oluyor
+
     }
 }
