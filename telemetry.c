@@ -20,9 +20,9 @@ void telemetry_build_frame(TelemetryFrame_t *frame, uint16_t seq_num)
 {
     frame->sync = TELEMETRY_SYNC_BYTE;
     frame->seq_num = seq_num;
-    // Gercek sensor yok, sahte/degisen deger uretiyoruz
-    frame->fake_temp = 2500 + (seq_num % 50);       // ~25.00-25.50 C
-    frame->fake_pressure = 10132 + (seq_num % 20);  // ~1013.2-1015.1 hPa
+    
+    frame->fake_temp = 2500 + (seq_num % 50);       
+    frame->fake_pressure = 10132 + (seq_num % 20);  
 
     frame->crc16 = crc16_ccitt((uint8_t*)frame, TELEMETRY_CRC_DATA_LEN);
 }
