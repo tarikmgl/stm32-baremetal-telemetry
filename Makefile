@@ -4,7 +4,7 @@ OBJCOPY = arm-none-eabi-objcopy
 CFLAGS = -mcpu=cortex-m3 -mthumb -O0 -g -ffreestanding -nostdlib
 LDFLAGS = -T linker.ld -nostdlib
 
-SRCS = startup.s main.c uart.c telemetry.c
+SRCS = startup.s main.c uart.c telemetry.c can.c
 
 all: firmware.bin
 

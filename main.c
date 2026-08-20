@@ -1,6 +1,7 @@
 #include <stdint.h>
 #include "uart.h"
 #include "telemetry.h"
+#include "can.h"
 
 #define RCC_BASE      0x40021000UL
 #define GPIOC_BASE    0x40011000UL
@@ -84,14 +85,41 @@ void TIM2_IRQHandler(void) {
 int main(void) {
     SystemClock_Config();
 
-    RCC_APB2ENR |= (1 << 4);
-    GPIOC_CRH &= ~(0xF << 20);
-    GPIOC_CRH |=  (0x2 << 20);
+    RCC_APB2ENR |= (1 << 4); // GPIOC clock enable
+    GPIOC_CRH &= ~(0xF << 20); // PC13 = push-pull output
+    GPIOC_CRH |=  (0x2 << 20); // PC13 = push-pull output
 
     uart_init();
-    TIM2_Init();
+    TIM2_Init();    
+    can_init();
+    can_normal_mode();
+
+    uint8_t tx_data[] = {0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88};
+    uint8_t rx_data[8] = {0};
+    uint32_t rx_id = 0;
+    uint32_t tx_id = 0x123;
+
+    // CAN mesaj gonder
+    can_send(tx_id, tx_data, sizeof(tx_data));
+    
+    delay(1000);
+
+    uint8_t len = can_receive(&rx_id, rx_data);
+    if (len > 0) {
+        // Gelen mesaj var, UART'tan gonder
+        uart_send_char('R');
+        uart_send_char('X');
+        uart_send_char(':');
+        uart_send_char((rx_id >> 8) & 0xFF);
+        uart_send_char(rx_id & 0xFF);
+        uart_send_char(' ');
+        for (uint8_t i = 0; i < len; i++) {
+            uart_send_char(rx_data[i]);
+        }
+        uart_send_char('\n');
+    }
 
     while (1) {
-        // Ana dongu bos - her sey interrupt icinde oluyor
+
     }
 }
